@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stopwatch</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="stopwatch">
+  <div id="display">00:00:00</div>
+  <button id="startStop" onclick="startStop()">Start</button>
+  <button id="reset" onclick="reset()">Reset</button>
+  <button id="lap" onclick="lap()">Lap</button>
+  <ul id="laps"></ul>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
+
+
+
+
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+.stopwatch {
+  margin-top: 50px;
+}
+
+#display {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+button {
+  margin: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+#laps {
+  list-style-type: none;
+  padding: 0;
+}
+
+#laps li {
+  margin-bottom: 5px;
+}
+
+
+
+
+let timer; // Variable to hold setInterval function
+let running = false; // Flag to track if the stopwatch is running
+let startTime; // Variable to hold the start time
+let lapCounter = 1; // Variable to track lap number
+
+function startStop() {
+  if (!running) {
+    startTimer();
+    document.getElementById('startStop').textContent = 'Stop';
+  } else {
+    stopTimer();
+    document.getElementById('startStop').textContent = 'Start';
+  }
+  running = !running;
+}
+
+function startTimer() {
+  startTime = Date.now();
+  timer = setInterval(updateDisplay, 10); // Update display every 10 milliseconds
+}
+
+function stopTimer() {
+  clearInterval(timer);
+}
+
+function reset() {
+  stopTimer();
+  running = false;
+  document.getElementById('display').textContent = '00:00:00';
+  document.getElementById('startStop').textContent = 'Start';
+  lapCounter = 1;
+  document.getElementById('laps').innerHTML = '';
+}
+
+function updateDisplay() {
+  let currentTime = Date.now();
+  let elapsedTime = new Date(currentTime - startTime);
+  let minutes = elapsedTime.getMinutes().toString().padStart(2, '0');
+  let seconds = elapsedTime.getSeconds().toString().padStart(2, '0');
+  let milliseconds = Math.floor(elapsedTime.getMilliseconds() / 10).toString().padStart(2, '0');
+  document.getElementById('display').textContent = `${minutes}:${seconds}:${milliseconds}`;
+}
+
+function lap() {
+  if (running) {
+    let lapTime = document.getElementById('display').textContent;
+    let lapItem = document.createElement('li');
+    lapItem.textContent = `Lap ${lapCounter}: ${lapTime}`;
+    document.getElementById('laps').appendChild(lapItem);
+    lapCounter++;
+  }
+}
